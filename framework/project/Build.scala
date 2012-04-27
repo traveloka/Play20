@@ -15,7 +15,7 @@ object PlayBuild extends Build {
         file("src/templates"),
         settings = buildSettings ++ Seq(
             libraryDependencies := templatesDependencies,
-            publishTo := Some(playRepository),
+            publishTo := Some(publicationRepository),
             publishArtifact in (Compile, packageDoc) := false,
             publishArtifact in (Compile, packageSrc) := false,
             unmanagedJars in Compile += compilerJar,
@@ -29,7 +29,7 @@ object PlayBuild extends Build {
         file("src/anorm"),
         settings = buildSettings ++ Seq(
             libraryDependencies := anormDependencies,
-            publishTo := Some(playRepository),
+            publishTo := Some(publicationRepository),
             scalacOptions ++= Seq("-encoding", "UTF-8", "-Xlint","-deprecation", "-unchecked"),
             publishArtifact in (Compile, packageDoc) := false,
             publishArtifact in (Compile, packageSrc) := true
@@ -42,7 +42,7 @@ object PlayBuild extends Build {
         settings = buildSettings ++ Seq(
             libraryDependencies := runtime,
             sourceGenerators in Compile <+= sourceManaged in Compile map PlayVersion,
-            publishTo := Some(playRepository),
+            publishTo := Some(publicationRepository),
             scalacOptions ++= Seq("-encoding", "UTF-8", "-Xlint","-deprecation", "-unchecked"),
             javacOptions ++= Seq("-encoding", "UTF-8"),
             publishArtifact in (Compile, packageDoc) := false,
@@ -58,7 +58,7 @@ object PlayBuild extends Build {
       file("src/play-test"),
       settings = buildSettings ++ Seq(
         libraryDependencies := testDependencies,
-        publishTo := Some(playRepository),
+        publishTo := Some(publicationRepository),
         scalacOptions ++= Seq("-encoding", "UTF-8", "-Xlint","-deprecation", "-unchecked"),
         javacOptions  ++= Seq("-encoding", "UTF-8","-Xlint:unchecked", "-Xlint:deprecation"),
         publishArtifact in (Compile, packageDoc) := false,
@@ -77,7 +77,7 @@ object PlayBuild extends Build {
         addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-core" % "2.0.0"),
         addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.1.0-M1-TYPESAFE"),
         unmanagedJars in Compile ++= sbtJars,
-        publishTo := Some(playIvyRepository),
+        publishTo := Some(ivyPublicationRepository),
         scalacOptions ++= Seq("-encoding", "UTF-8", "-Xlint","-deprecation", "-unchecked"),
         publishArtifact in (Compile, packageDoc) := false,
         publishArtifact in (Compile, packageSrc) := false,
@@ -92,7 +92,7 @@ object PlayBuild extends Build {
         libraryDependencies := consoleDependencies,
         sourceGenerators in Compile <+= sourceManaged in Compile map PlayVersion,
         unmanagedJars in Compile ++=  sbtJars,
-        publishTo := Some(playRepository),
+        publishTo := Some(publicationRepository),
         scalacOptions ++= Seq("-encoding", "UTF-8", "-Xlint","-deprecation", "-unchecked"),
         publishArtifact in (Compile, packageDoc) := false,
         publishArtifact in (Compile, packageSrc) := true,
@@ -119,7 +119,7 @@ object PlayBuild extends Build {
     object BuildSettings {
 
         val buildOrganization = "play"
-        val buildVersion      = Option(System.getProperty("play.version")).filterNot(_.isEmpty).getOrElse("2.0-unknown")
+        val buildVersion      = "2.0-traveloka-SNAPSHOT"
         val buildScalaVersion = "2.9.1"
         val buildSbtVersion   = "0.11.2"
 
@@ -157,14 +157,30 @@ object PlayBuild extends Build {
         val playLocalRepository = Resolver.file("Play Local Repository", file("../repository/local"))(Resolver.ivyStylePatterns) 
         
         val typesafe = "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+
+        // Modified for Traveloka
+        val artifactoryReleases = "Local Artifactory Releases" at "http://traveloka-t1.local:8081/artifactory/libs-release-local/"
+        val artifactorySnapshot = "Local Artifactory Snapshots" at "http://traveloka-t1.local:8081/artifactory/libs-snapshot-local/"
         
         val typesafeReleases = "Typesafe Releases Repository" at "http://repo.typesafe.com/typesafe/maven-releases/"
         val typesafeSnapshot = "Typesafe Snapshots Repository" at "http://repo.typesafe.com/typesafe/maven-snapshots/"
-        val playRepository = if (buildVersion.endsWith("SNAPSHOT")) typesafeSnapshot else typesafeReleases
+        val publicationRepository = if (buildVersion.endsWith("SNAPSHOT")) artifactorySnapshot else artifactoryReleases
+
+// Can upload, but can't resolve        
+//        val travelokaLocalrepoReleases = Resolver.url("Traveloka Local Repo Releases", url("http://traveloka-t1.local:8081/artifactory/libs-release-local/"))(Resolver.ivyStylePatterns) 
+//        val travelokaLocalrepoSnapshot = Resolver.url("Traveloka Local Repo Snapshots", url("http://traveloka-t1.local:8081/artifactory/libs-snapshot-local/"))(Resolver.ivyStylePatterns) 
+        
+// Can't make WebDAV work at all
+//        val travelokaLocalrepoReleases = Resolver.url("Traveloka Local Repo Releases", url("http://traveloka-localrepo/ivy/"))(Resolver.ivyStylePatterns) 
+//        val travelokaLocalrepoSnapshot = Resolver.url("Traveloka Local Repo Snapshots", url("http://traveloka-localrepo/ivy/"))(Resolver.ivyStylePatterns) 
+        
+        val travelokaArtifactoryIvyReleases = Resolver.url("Traveloka Local Repo Releases", url("http://traveloka-t1.local:8081/artifactory/libs-release-local-ivy/"))(Resolver.ivyStylePatterns) 
+        val travelokaArtifactoryIvySnapshot = Resolver.url("Traveloka Local Repo Snapshots", url("http://traveloka-t1.local:8081/artifactory/libs-snapshot-local-ivy/"))(Resolver.ivyStylePatterns) 
         
         val typesafeIvyReleases = Resolver.url("Typesafe Ivy Releases Repository", url("http://repo.typesafe.com/typesafe/ivy-releases/"))(Resolver.ivyStylePatterns) 
         val typesafeIvySnapshot = Resolver.url("Typesafe Ivy Snapshots Repository", url("http://repo.typesafe.com/typesafe/ivy-snapshots/"))(Resolver.ivyStylePatterns) 
-        val playIvyRepository = if (buildVersion.endsWith("SNAPSHOT")) typesafeIvySnapshot else typesafeIvyReleases
+        
+        val ivyPublicationRepository = if (buildVersion.endsWith("SNAPSHOT")) travelokaArtifactoryIvySnapshot else travelokaArtifactoryIvyReleases
     }
 
     object Dependencies {
