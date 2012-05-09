@@ -9,6 +9,10 @@ import java.util.Arrays;
  */
 public class Messages {
 
+    // For injection purpose for testing.  This is a workaround for bypassing the need
+    // to query the whole chain of unmockable contextual statis objects during unit tests.
+    public static Lang defaultLang = null;
+
     /**
     * Translates a message.
     *
@@ -34,8 +38,12 @@ public class Messages {
     * @return the formatted message or a default rendering if the key wasn't defined
     */
     public static String get(String key, Object... args) {
-        Buffer<Object> scalaArgs = scala.collection.JavaConverters.asScalaBufferConverter(Arrays.asList(args)).asScala();
-        return play.api.i18n.Messages.apply(key, scalaArgs, play.mvc.Http.Context.Implicit.lang());
+        if (defaultLang == null) {
+            Buffer<Object> scalaArgs = scala.collection.JavaConverters.asScalaBufferConverter(Arrays.asList(args)).asScala();
+            return play.api.i18n.Messages.apply(key, scalaArgs, play.mvc.Http.Context.Implicit.lang());
+        } else {
+            return get(defaultLang, key, args);
+        }
     }
     
 }

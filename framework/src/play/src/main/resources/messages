@@ -22,3 +22,14 @@ error.minLength=Minimum length is {0}
 error.maxLength=Maximum length is {0}
 error.email=Valid email required
 error.pattern=Must satisfy {0}
+
+error.isBoolean=Value must be "true" or "false"
+error.isByte=Value must be an integer
+error.isCharacter=Value must be a letter
+error.isShort=Value must be an integer
+error.isInteger=Value must be an integer
+error.isLong=Value must be an integer
+error.isFloat=Value must be a number
+error.isDouble=Value must be a number
+error.isString=Value must be a string of letters
+error.isValidEnum=Value must be a valid value from the selection
