@@ -29,11 +29,10 @@ public class Http {
             return c;
         }
         
-        //
-        
         private final Request request;
         private final Response response;
         private final Session session;
+        private final Map<String, String> encryptedSession;
         private final Flash flash;
         
         
@@ -48,6 +47,7 @@ public class Http {
             this.request = request;
             this.response = new Response();
             this.session = new Session(sessionData);
+            this.encryptedSession = new LinkedHashMap<String, String>();
             this.flash = new Flash(flashData);
         }
         
@@ -71,7 +71,14 @@ public class Http {
         public Session session() {
             return session;
         }
-        
+
+        /**
+         * Returns the current encrypted session.
+         */
+        public Map<String, String> encryptedSession() {
+            return encryptedSession;
+        }
+
         /**
          * Returns the current flash scope.
          */
@@ -116,7 +123,14 @@ public class Http {
             public static Session session() {
                 return Context.current().session();
             }
-            
+
+            /**
+             * Returns the current encrypted session.
+             */
+            public static Map<String, String> encryptedSession() {
+                return Context.current().encryptedSession();
+            }
+
             /**
              * Returns the current lang.
              */

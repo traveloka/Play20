@@ -1,5 +1,6 @@
 package play.i18n;
 
+import play.mvc.Http;
 import scala.collection.mutable.Buffer;
 
 import java.util.Arrays;
@@ -45,5 +46,17 @@ public class Messages {
             return get(defaultLang, key, args);
         }
     }
-    
+
+    /**
+     * Translates a message, using a Http.Context not yet bound to the current context.
+     * This is useful for example for enabling Messages API for interceptor Action logic.
+     * @param ctx
+     * @param key
+     * @param args
+     * @return
+     */
+    public static String get(Http.Context ctx, String key, Object... args) {
+        Lang lang = Lang.preferred(ctx.request().acceptLanguages());
+        return get(lang, key, args);
+    }
 }

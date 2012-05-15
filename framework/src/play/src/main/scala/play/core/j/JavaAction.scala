@@ -26,14 +26,8 @@ trait JavaAction extends Action[play.mvc.Http.RequestBody] with JavaHelpers {
     val javaContext = createJavaContext(req)
 
     val rootAction = new JAction[Any] {
-
       def call(ctx: JContext): JResult = {
-        try {
-          JContext.current.set(ctx)
-          invocation
-        } finally {
-          JContext.current.remove()
-        }
+        invocation
       }
     }
 
@@ -72,7 +66,19 @@ trait JavaAction extends Action[play.mvc.Http.RequestBody] with JavaHelpers {
       }
     }
 
-    createResult(javaContext, finalAction.call(javaContext))
+    val outerAction = new JAction[Any] {
+      def call(ctx: JContext): JResult = {
+        try {
+          // Ensure that the Http Context is set before any of the Actions are called
+          JContext.current.set(ctx)
+          finalAction.call(ctx)
+        } finally {
+          JContext.current.remove()
+        }
+      }
+    }
+
+    createResult(javaContext, outerAction.call(javaContext))
   }
 
 }

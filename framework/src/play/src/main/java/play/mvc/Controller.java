@@ -27,7 +27,7 @@ public abstract class Controller extends Results implements Status, HeaderNames 
     public static Request request() {
         return Http.Context.current().request();
     }
-    
+
     /**
      * Returns the current lang.
      */
@@ -62,7 +62,19 @@ public abstract class Controller extends Results implements Status, HeaderNames 
     public static String session(String key) {
         return session().get(key);
     }
-    
+
+    public static Map<String, String> encryptedSession() {
+        return Http.Context.current().encryptedSession();
+    }
+
+    public static String encryptedSession(String key) {
+        return encryptedSession().get(key);
+    }
+
+    public static void encryptedSession(String key, String value) {
+        encryptedSession().put(key, value);
+    }
+
     /**
      * Returns the current HTTP flash scope.
      */
@@ -83,7 +95,19 @@ public abstract class Controller extends Results implements Status, HeaderNames 
     public static String flash(String key) {
         return flash().get(key);
     }
-    
+
+    public static Map<String, Object> args() {
+        return Http.Context.current().args;
+    }
+
+    public static Object args(String key) {
+        return args().get(key);
+    }
+
+    public static void args(String key, Object value) {
+        args().put(key, value);
+    }
+
     // -- Form
     
     /**
