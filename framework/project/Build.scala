@@ -120,7 +120,7 @@ object PlayBuild extends Build {
 
         val buildOrganization = "play"
         // Note: SNAPSHOT versioning causes problem when uploading to artifactory
-        val buildVersion      = "2.0-traveloka-10001"
+        val buildVersion      = "2.0-traveloka-10002"
         val buildScalaVersion = "2.9.1"
         val buildSbtVersion   = "0.11.2"
 
